@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sweater-dicount-notifier
+
+Parameters:
+  EmailSecretBucket:
+    Type: String
+    Description: S3 bucket that contains email secrets
+  EmailSecretJsonKey:
+    Type: String
+    Description: JSON file that contains email secrets (structure defined in README)
+  SNSEmailParameter:
+    Type: String
+    Description: Enter email address for execution failure SNS topic subscription.
+  Schedule:
+    Type: String
+    Description: Cron schedule for function invocation
+    Default: cron(0 8 * * ? *)
+  FunctionTimeout:
+    Type: Number
+    Description: Lambda function timeout
+    Default: 600
+  FunctionMemorySize:
+    Type: Number
+    Description: Lambda function memory size
+    MinValue: 128
+    Default: 275
+
+Globals:
+  Function:
+    Timeout: !Ref FunctionTimeout
+    MemorySize: !Ref FunctionMemorySize
+    Handler: app.lambda_handler
+    Runtime: python3.9
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        EMAIL_SECRET_BUCKET: !Ref EmailSecretBucket 
+        EMAIL_SECRET_JSON_KEY: !Ref EmailSecretJsonKey 
+
+Resources:
+  SweaterDiscountNotifierFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: sweater_discount_notifier/
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref EmailSecretBucket
+      Events:
+        InvocationLevel:
+          Type: Schedule
+          Properties:
+            Schedule: !Ref Schedule
+            Name: SweaterDiscountNotifierSchedule
+            Description: Sends an email to me when there are on sweaters.
+            Enabled: true
+
+  SweaterDiscountErrorTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+      - Endpoint: !Ref SNSEmailParameter
+        Protocol: email
+  
+  ExecutionFailureAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      ActionsEnabled: true
+      AlarmDescription: 'Sends an alarm when the sweater discount notifier lambda function fails.'
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+         - Name: FunctionName
+           Value: !Ref SweaterDiscountNotifierFunction
+      EvaluationPeriods: 1
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 21600
+      Threshold: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref SweaterDiscountErrorTopic
+
+Outputs:
+  # InvocationLevel is an implicit Schedule event rule created out of Events key under Serverless::Function
+  SweaterDiscountNotifierFunction:
+    Description: "Sweater Discount Notifier Function ARN"
+    Value: !GetAtt SweaterDiscountNotifierFunction.Arn
+  SweaterDiscountNotifierIamRole:
+    Description: "Implicit IAM Role created for Sweater Discount Notifier function"
+    Value: !GetAtt SweaterDiscountNotifierFunctionRole.Arn

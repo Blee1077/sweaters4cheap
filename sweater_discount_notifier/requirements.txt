@@ -1,0 +1,6 @@
+requests==2.29.0
+urllib3<2
+pandas
+redmail
+pretty_html_table
+beautifulsoup4
