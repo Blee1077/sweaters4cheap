@@ -4,6 +4,10 @@ Description: >
   sweater-dicount-notifier
 
 Parameters:
+  DiscountThreshold:
+    Type: Number
+    Description: Discount threshold to send email
+    Default: 40
   EmailSecretBucket:
     Type: String
     Description: S3 bucket that contains email secrets
@@ -39,6 +43,7 @@ Globals:
       Variables:
         EMAIL_SECRET_BUCKET: !Ref EmailSecretBucket 
         EMAIL_SECRET_JSON_KEY: !Ref EmailSecretJsonKey 
+        DISCOUNT_THRESHOLD: !Ref DiscountThreshold
 
 Resources:
   SweaterDiscountNotifierFunction:

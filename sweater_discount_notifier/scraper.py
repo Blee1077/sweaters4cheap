@@ -14,7 +14,6 @@ def get_product_price_paul_james(url: str):
     product_sku_element = soup.find('p', class_='product-single__sku')
     full_price_element = soup.find('span', class_='product__price')
     sale_price_element = soup.find('span', class_='product__price on-sale')
-    saving_element = soup.find('span', class_='product__price-savings')
     img_url = soup.find('div', class_='image-wrap').find('img')['data-photoswipe-src'][2:]
     img_url = img_url[:img_url.find('?')]
 
@@ -29,7 +28,6 @@ def get_product_price_paul_james(url: str):
             "Image": img_url,
             "Full Price": float(full_price_element.get_text().strip().strip("£")),
             "Sale Price": float(sale_price_element.get_text().strip().strip("£")),
-            "Savings": saving_element.get_text().strip()
         }
         
         return element_dict

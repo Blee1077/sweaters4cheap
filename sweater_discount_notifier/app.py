@@ -44,8 +44,15 @@ def lambda_handler(event, context):
     filt_res = [prod for prod in results if prod]
     df = pd.DataFrame.from_records(filt_res)
     logger.info(f"{len(df)} items are currently on sale.")
+    
+    # Calculate discount %
+    df['Savings (%)'] = (100 - (100 * df['Sale Price'] / df['Full Price'])).round()
+    df = df.sort_values(axis=0, by='Savings (%)', ascending=False)
+    max_disc = df['Savings (%)'].max()
+    logger.info(f"Max discounted item is {max_disc}% off.")
 
-    if len(df) > 0:
+    # Send email if conditions met
+    if (len(df) > 0) and (max_disc >= float(os.environ['DISCOUNT_THRESHOLD'])):
         html = """
         <html>
             <head></head>
@@ -71,7 +78,7 @@ def lambda_handler(event, context):
         for img_url in img_urls:
             html = html.replace(img_url, f'<img src="https://{img_url}" alt="" width="135" height="200">')
 
-        # Set up email
+        # Set up email client
         email_secret = load_json(os.environ['EMAIL_SECRET_BUCKET'], os.environ['EMAIL_SECRET_JSON_KEY'])
         email = EmailSender(
                 host=email_secret['host'],
@@ -92,5 +99,5 @@ def lambda_handler(event, context):
         return True
     
     else:
-        logger.info("No items are currently on sale, no email to send.")
+        logger.info("No items are currently on sale or discount threshold not met, no email to send.")
         return True
