@@ -7,7 +7,7 @@ Parameters:
   DiscountThreshold:
     Type: Number
     Description: Discount threshold to send email
-    Default: 40
+    Default: 25
   EmailSecretBucket:
     Type: String
     Description: S3 bucket that contains email secrets

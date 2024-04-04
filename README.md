@@ -22,7 +22,7 @@ The repository is structured as follows:
 
 ## Configuration
 Before deploying the application, update the `template.yaml` with appropriate values:
-- `DiscountThreshold`: Minimum discount percentage to trigger a notification. Default is `40`.
+- `DiscountThreshold`: Minimum discount percentage to trigger a notification. Default is `25`.
 - `EmailSecretBucket`: Name of the S3 bucket that contains the email secret JSON file.
 - `EmailSecretJsonKey`: Name of the JSON file with email credentials.
 - `SNSEmailParameter`: Email address for SNS topic subscription on errors.

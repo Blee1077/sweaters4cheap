@@ -40,12 +40,15 @@ def lambda_handler(event, context):
     for url in PROD_URL_DICT.get('paul_james'):
         results.append(get_product_price_paul_james(url))
     
-    # Filter results for those with sales
-    filt_res = [prod for prod in results if prod]
-    df = pd.DataFrame.from_records(filt_res)
-    logger.info(f"{len(df)} items are currently on sale.")
+    if any(results):
+        filt_res = [prod for prod in results if prod]
+        logger.info(f"{len(filt_res)} items are currently on sale.")
+    else:
+        logger.info("No items are currently on sale.")
+        return True
     
-    # Calculate discount %
+    # Convert results to dataframe & calculate discount %
+    df = pd.DataFrame.from_records(filt_res)
     df['Savings (%)'] = (100 - (100 * df['Sale Price'] / df['Full Price'])).round()
     df = df.sort_values(axis=0, by='Savings (%)', ascending=False)
     max_disc = df['Savings (%)'].max()
@@ -99,5 +102,5 @@ def lambda_handler(event, context):
         return True
     
     else:
-        logger.info("No items are currently on sale or discount threshold not met, no email to send.")
+        logger.info("No items meet the discount threshold, no email to send.")
         return True
