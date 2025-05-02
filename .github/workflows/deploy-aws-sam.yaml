@@ -4,15 +4,34 @@ on:
   push:
     branches: [main]
 
+  workflow_dispatch:
+    inputs:
+      stack-name:
+        description: "Name of the CloudFormation stack"
+        required: true
+        default: sweater-discount-app
+      s3-bucket:
+        description: "S3 bucket for SAM packaging"
+        required: true
+        default: aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy
+      region:
+        description: "AWS region"
+        required: true
+        default: eu-west-2
+      parameters:
+        description: "Additional --parameter-overrides (optional)"
+        required: false
+        default: |
+          --parameter-overrides \
+          EmailSecretBucket="crypto-indicator-alert" \
+          EmailSecretJsonKey="outlook-email-secret.json" \
+          SNSEmailParameter="superbrandonlee@hotmail.com"
+
 jobs:
   trigger-shared-deploy:
     uses: blee1077/github-workflows/.github/workflows/trigger-deploy-aws-sam.yaml@main
     with:
-      stack-name: sweater-discount-app
-      s3-bucket: aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy
-      region: eu-west-2
-      parameters: |
-        --parameter-overrides \
-        EmailSecretBucket="crypto-indicator-alert" \
-        EmailSecretJsonKey="outlook-email-secret.json" \
-        SNSEmailParameter="superbrandonlee@hotmail.com" \
+      stack-name: ${{ github.event.inputs.stack-name || 'sweater-discount-app' }}
+      s3-bucket: ${{ github.event.inputs.s3-bucket || 'aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy' }}
+      region: ${{ github.event.inputs.region || 'eu-west-2' }}
+      parameters: ${{ github.event.inputs.parameters }}
