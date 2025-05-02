@@ -5,6 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+  
 jobs:
   deploy:
     uses: blee1077/github-workflows/.github/workflows/deploy-aws-sam.yaml@main
