@@ -35,7 +35,7 @@ jobs:
   trigger-shared-deploy:
     uses: blee1077/github-workflows/.github/workflows/trigger-deploy-aws-sam.yaml@main
     with:
-      stack-name: ${{ inputs.stack-name || 'sweater-discount-app' }}
-      s3-bucket: ${{ inputs.s3-bucket || 'aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy' }}
-      region: ${{ inputs.region || 'eu-west-2' }}
+      stack-name: ${{ inputs.stack-name }}
+      s3-bucket: ${{ inputs.s3-bucket }}
+      region: ${{ inputs.region }}
       parameters: ${{ inputs.parameters }}
