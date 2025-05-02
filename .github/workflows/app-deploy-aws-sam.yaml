@@ -20,7 +20,7 @@ on:
         default: aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy
       region:
         description: "AWS region"
-        required: true
+        required: false
         default: eu-west-2
       parameters:
         description: "Additional --parameter-overrides (optional)"
@@ -35,7 +35,7 @@ jobs:
   trigger-shared-deploy:
     uses: blee1077/github-workflows/.github/workflows/trigger-deploy-aws-sam.yaml@main
     with:
-      stack-name: ${{ github.event.inputs.stack-name || 'sweater-discount-app' }}
-      s3-bucket: ${{ github.event.inputs.s3-bucket || 'aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy' }}
-      region: ${{ github.event.inputs.region || 'eu-west-2' }}
-      parameters: ${{ github.event.inputs.parameters }}
+      stack-name: ${{ inputs.stack-name || 'sweater-discount-app' }}
+      s3-bucket: ${{ inputs.s3-bucket || 'aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy' }}
+      region: ${{ inputs.region || 'eu-west-2' }}
+      parameters: ${{ inputs.parameters }}
