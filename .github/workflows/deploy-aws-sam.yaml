@@ -1,0 +1,19 @@
+name: Deploy via Shared SAM CD Workflow
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: blee1077/github-workflows/.github/workflows/deploy-aws-sam.yaml@main
+    with:
+      stack-name: sweater-discount-app
+      s3-bucket: aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy
+      region: eu-west-2
+      parameters: |
+        --parameter-overrides \
+        EmailSecretBucket="crypto-indicator-alert" \
+        EmailSecretJsonKey="outlook-email-secret.json" \
+        SNSEmailParameter="superbrandonlee@hotmail.com" \
