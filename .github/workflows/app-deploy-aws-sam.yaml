@@ -20,6 +20,6 @@ jobs:
         EmailSecretBucket=crypto-indicator-alert \
         EmailSecretJsonKey=outlook-email-secret.json \
         SNSEmailParameter=superbrandonlee@hotmail.com \
-        ScheduleEnabled=true \
+        ScheduleEnabled=false \
         DiscountThreshold=50
     secrets: inherit
