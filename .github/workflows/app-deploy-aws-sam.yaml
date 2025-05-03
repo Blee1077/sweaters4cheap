@@ -16,5 +16,9 @@ jobs:
       stack-name: sweater-discount-app
       s3-bucket: aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy
       region: eu-west-2
-      parameters: --parameter-overrides EmailSecretBucket=crypto-indicator-alert EmailSecretJsonKey=outlook-email-secret.json SNSEmailParameter=superbrandonlee@hotmail.com
+      parameters: --parameter-overrides \
+        EmailSecretBucket=crypto-indicator-alert \
+        EmailSecretJsonKey=outlook-email-secret.json \
+        SNSEmailParameter=superbrandonlee@hotmail.com \
+        ScheduleEnabled=false
     secrets: inherit

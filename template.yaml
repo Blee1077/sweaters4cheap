@@ -21,6 +21,12 @@ Parameters:
     Type: String
     Description: Cron schedule for function invocation
     Default: cron(0 8 * * ? *)
+  ScheduleEnabled:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: true
   FunctionTimeout:
     Type: Number
     Description: Lambda function timeout
@@ -60,7 +66,7 @@ Resources:
             Schedule: !Ref Schedule
             Name: SweaterDiscountNotifierSchedule
             Description: Sends an email to me when there are on sweaters.
-            Enabled: true
+            Enabled: !Ref ScheduleEnabled
 
   SweaterDiscountErrorTopic:
     Type: AWS::SNS::Topic
