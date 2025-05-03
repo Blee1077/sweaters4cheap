@@ -54,6 +54,8 @@ Globals:
 Resources:
   SweaterDiscountNotifierFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      ForceUpdate: !Ref ScheduleEnabled  # Forces update when the value changes
     Properties:
       CodeUri: sweater_discount_notifier/
       Policies:
