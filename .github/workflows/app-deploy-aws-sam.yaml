@@ -5,21 +5,32 @@ permissions:
   contents: read
   
 on:
-  workflow_dispatch:
   push:
     branches: [main]
+
+  workflow_dispatch:
+    inputs:
+      stack-name:
+        required: false
+        type: string
+        default: sweater-discount-app
+      parameters:
+        required: false
+        type: string
+        default: |
+          --parameter-overrides \
+          EmailSecretBucket=crypto-indicator-alert \
+          EmailSecretJsonKey=outlook-email-secret.json \
+          SNSEmailParameter=superbrandonlee@hotmail.com \
+          ScheduleEnabled=false \
+          DiscountThreshold=50
 
 jobs:
   trigger-shared-deploy:
     uses: blee1077/github-workflows/.github/workflows/trigger-deploy-aws-sam.yaml@main
     with:
-      stack-name: sweater-discount-app
+      stack-name: ${{ github.event_name == 'workflow_dispatch' && inputs.stack-name || 'sweater-discount-app' }}
       s3-bucket: aws-sam-cli-managed-default-samclisourcebucket-9oqfaddn9oiy
       region: eu-west-2
-      parameters: --parameter-overrides \
-        EmailSecretBucket=crypto-indicator-alert \
-        EmailSecretJsonKey=outlook-email-secret.json \
-        SNSEmailParameter=superbrandonlee@hotmail.com \
-        ScheduleEnabled=false \
-        DiscountThreshold=50
+      parameters: ${{ github.event_name == 'workflow_dispatch' && inputs.parameters || '--parameter-overrides EmailSecretBucket=crypto-indicator-alert EmailSecretJsonKey=outlook-email-secret.json SNSEmailParameter=superbrandonlee@hotmail.com ScheduleEnabled=false DiscountThreshold=50' }}
     secrets: inherit
